@@ -12,33 +12,82 @@
 # --------------------------------------------------
 
 
-
+from os import system
 import calculos
 
 # programa principal
+system("clear")
 
-CIR = raw_input('Numero de circuito ')
-V = float(input('Voltaje = '))
-P = float(input('Potencia = '))
-L = float(input('Longitud = '))
-fp = float(input('Factor de Potencia = '))
-n = float(input('Eficiencia = '))
-e = float(input('Caida de tensión deseada = '))
-fa = float(input('Factor de agrupamiento = '))
-ft = float(input('Factor de temperatura = '))
-Tc = float(input('Temperatura del conductor = '))
-Tcc = float(input('Temperatura de cortocicuito del conductor = '))
-tcc = float(input('Tiempo del cortocircuito = '))
-Icc = float(input('Corriente de cortocircuito = '))
-sistema = int(input('Tipo de sistema, mono (1), bifasico (2), trifasico (3) ='))
+print(' ')
+print('                 CALIBRIN AWG v0.0.3')
+print('                 -------------------')
+print(' ')
+print(' Programa para hacer calculos de calibre de conductor')
+print('          en circuitos derivados electricos.')
+print(' ')
+
+class DatosCircuito:
+	"""Creador de datos de circuitos cid"""
+	def __init__(self):
+		self.v = float(input(' Voltaje = '))
+		self.p = float(input(' Potencia = '))
+		self.l = float(input(' Longitud = '))
+		self.fp = float(input(' Factor de Potencia = '))
+		self.n = float(input(' Eficiencia = '))
+		self.e = float(input(' Caida de tensión deseada = '))
+		self.fa = float(input(' Factor de agrupamiento = '))
+		self.ft = float(input(' Factor de temperatura = '))
+		self.Tc = float(input(' Temperatura del conductor = '))
+		self.Tcc = float(input(' Temperatura de cortocicuito del conductor = '))
+		self.tcc = float(input(' Tiempo del cortocircuito = '))
+		self.Icc = float(input(' Corriente de cortocircuito = '))
+		self.st = int(input(' Tipo de sistema, mono (1), bifasico (2), trifasico (3) = '))
+
+class ResultadoCircuito:
+	
+	def __init__(self):
+		dat = DatosCircuito()
+		self.st = calculos.alimentacion(dat.st)
+		self.ipc = calculos.corriente_plena_carga(dat.p, dat.v, dat.fp, dat.n, dat.st)
+		self.ic = calculos.corriente_corregida(dat.fa, dat.ft, self.ipc)
+		self.imin = calculos.corriente_minima(self.ipc)
+		self.amp = calculos.seleccion_ampacidad(self.ipc, self.ic, self.imin)
+		self.Zmax = calculos.impedancia_maxima(dat.e, dat.v, dat.l, self.ipc, self.st[0])
+		self.Zreal = calculos.impedancia_real(self.Zmax)
+		self.ereal = calculos.caida_tension_real(self.Zreal[0], self.st[0], self.ipc, dat.l, dat.v)
+		self.sicc = calculos.seccion_conductor_cc(dat.Icc, dat.Tc, dat.Tcc, dat.tcc)
+		self.awg = calculos.conductor_AWG(self.amp[2], self.Zreal[0], self.sicc[2])
 
 
-dat = [V, P, L, fp, n, e, fa, ft, Tc, Tcc, tcc, Icc, sistema]
+new = 0
 
-print (' ')
+while new != 2:
+	print(' ')
+	print(' Menu')
+	print(' ')
+	print(' 1 Circuito Nuevo ')
+	print(' 2 Salir ')
+	print(' ')
+	new = input(' Introduzca un numero segun su opcion ')
+	system("clear")
 
-for i in dat:
-    print i
-    
-print (' ')
+	if new == 1:
+		print(' ')
+		cid = ResultadoCircuito()
+		print(' ')
+		print('Resultados:')
+		print(' ')
+		print' Ipc  = ', cid.ipc
+		print' Ic   = ', cid.ic
+		print' Imin = ', cid.imin
+		print' Zmax = ', cid.Zmax
+		print' e%   = ', cid.ereal
+		print(' ')
+		print' CAL Ampacidad     ', cid.amp[1], 'AWG'
+		print' CAL Impedancia    ', cid.Zreal[1], 'AWG'
+		print' CAL Cortocircuito ', cid.sicc[1], 'AWG'
+		print(' ')
+		print' CAL Seleccionado  ', cid.awg[0], 'AWG'
+		print(' ')
+		print(' ')
 

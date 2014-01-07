@@ -61,23 +61,15 @@ def corriente_minima(Ipc, Inc=0):
 	return Imin
 
 def seleccion_ampacidad(Ipc, Ic, Imin):
-	I = [Ipc, Ic, Imin]
-	if Ipc > Ic:
-		if Ipc > Imin:
-			Inom = Ipc
-		else:
-			Inom = Imin
-	elif Ic > Imin:
-		Inom = Ic
-	else:
-		Inom = Imin
+	Inom = max(Ipc, Ic, Imin)
 	tabla_AWG = imprimir_tabla()
 	for i in tabla_AWG:
 		if Inom <= i[3]:
 			Icu = i[3]
 			AWG_amp = i[0]
 			AWG_z = i[1]
-	return Icu, AWG_amp, AWG_z, Inom, I
+			break
+	return Icu, AWG_amp, AWG_z, Inom
 
 def impedancia_maxima(e_p, Volt, Long, Ipc, k):
 	Z_m = (e_p*Volt*1000)/(k*Long*Ipc)
@@ -102,7 +94,7 @@ def seccion_conductor_cc(Icc, Tc, Tcc, tcc):
 	A_mm2 = 0.0005067074791*A_cmil
 	tabla_AWG = imprimir_tabla()
 	for i in tabla_AWG:
-		if A_mm <= i[4]:
+		if A_mm2 <= i[4]:
 			seccion_mm2 = i[4]
 			AWG_icc = i[0]
 			AWG_z = i[1]
@@ -112,19 +104,10 @@ def seccion_conductor_cc(Icc, Tc, Tcc, tcc):
 #nota: para AWG_amp[2], AWG_imp[0], AWG_icc[2]
 
 def conductor_AWG(AWG_amp, AWG_imp, AWG_icc):
-	AWG_lista = [AWG_amp, AWG_imp, AWG_icc]
-	if AWG_amp < AWG_imp:
-		if AWG_amp < AWG_icc:
-			AWG_z = AWG_amp
-		else:
-			AWG_z = AWG_icc
-	elif AWG_imp < AWG_icc:
-		AWG_z = AWG_imp
-	else:
-		AWG_z = AWG_icc
+	AWG_f = min(AWG_amp, AWG_imp, AWG_icc)
 	tabla_AWG = imprimir_tabla()
 	for i in tabla_AWG:
-		if AWG_z == i[1]:
+		if AWG_f == i[1]:
 			AWG = i
 			AWG_cal = i[0]
 			AWG_z = i[1]
