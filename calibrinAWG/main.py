@@ -77,11 +77,13 @@ while new != 2:
 		print(' ')
 		print('Resultados:')
 		print(' ')
-		print' Ipc  = ', cid.ipc
-		print' Ic   = ', cid.ic
-		print' Imin = ', cid.imin
-		print' Zmax = ', cid.Zmax
-		print' e%   = ', cid.ereal
+		print' Ipc   = ', cid.ipc
+		print' Ic    = ', cid.ic
+		print' Imin  = ', cid.imin
+		print' Zmax  = ', cid.Zmax
+		print' Acmil = ', cid.sicc[3]
+		print' Amm2  = ', cid.sicc[4]
+		print' e%    = ', cid.ereal
 		print(' ')
 		print' CAL Ampacidad     ', cid.amp[1], 'AWG'
 		print' CAL Impedancia    ', cid.Zreal[1], 'AWG'
