@@ -13,7 +13,7 @@
 
 
 from os import system
-import calculos
+import calc
 
 # programa principal
 system("clear")
@@ -47,16 +47,16 @@ class ResultadoCircuito:
 	
 	def __init__(self):
 		dat = DatosCircuito()
-		self.st = calculos.alimentacion(dat.st)
-		self.ipc = calculos.corriente_plena_carga(dat.p, dat.v, dat.fp, dat.n, dat.st)
-		self.ic = calculos.corriente_corregida(dat.fa, dat.ft, self.ipc)
-		self.imin = calculos.corriente_minima(self.ipc)
-		self.amp = calculos.seleccion_ampacidad(self.ipc, self.ic, self.imin)
-		self.Zmax = calculos.impedancia_maxima(dat.e, dat.v, dat.l, self.ipc, self.st[0])
-		self.Zreal = calculos.impedancia_real(self.Zmax)
-		self.ereal = calculos.caida_tension_real(self.Zreal[0], self.st[0], self.ipc, dat.l, dat.v)
-		self.sicc = calculos.seccion_conductor_cc(dat.Icc, dat.Tc, dat.Tcc, dat.tcc)
-		self.awg = calculos.conductor_AWG(self.amp[2], self.Zreal[0], self.sicc[2])
+		self.st = calc.alimentacion(dat.st)
+		self.ipc = calc.corriente_plena_carga(dat.p, dat.v, dat.fp, dat.n, dat.st)
+		self.ic = calc.corriente_corregida(dat.fa, dat.ft, self.ipc)
+		self.imin = calc.corriente_minima(self.ipc)
+		self.amp = calc.seleccion_ampacidad(self.ipc, self.ic, self.imin)
+		self.Zmax = calc.impedancia_maxima(dat.e, dat.v, dat.l, self.ipc, self.st[0])
+		self.Zreal = calc.impedancia_real(self.Zmax)
+		self.ereal = calc.caida_tension_real(self.Zreal[0], self.st[0], self.ipc, dat.l, dat.v)
+		self.sicc = calc.seccion_conductor_cc(dat.Icc, dat.Tc, dat.Tcc, dat.tcc)
+		self.awg = calc.conductor_AWG(self.amp[2], self.Zreal[0], self.sicc[2])
 
 
 new = 0

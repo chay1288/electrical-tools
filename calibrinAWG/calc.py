@@ -27,7 +27,7 @@
 #Z_r : Impedancia real del calibre del conductor
 #tcc : tiempo del cortocircuito
 
-from tabla_calibres import imprimir_tabla
+from db_tables import imprimir_tabla
 from math import sqrt, log10
 
 def alimentacion(sistema):
