@@ -10,33 +10,33 @@ import calc
 class DatosCircuito:
 	"""Creador de datos de circuitos cid"""
 	def __init__(self):
-		winmenu.addstr( 2,2,'Voltaje                                   = ')
-		winmenu.addstr( 3,2,'Potencia                                  = ')
-		winmenu.addstr( 4,2,'Longitud                                  = ')
-		winmenu.addstr( 5,2,'Factor de Potencia                        = ')
-		winmenu.addstr( 6,2,'Eficiencia                                = ')
-		winmenu.addstr( 7,2,'Caida de tension deseada                  = ')
-		winmenu.addstr( 8,2,'Factor de agrupamiento                    = ')
-		winmenu.addstr( 9,2,'Factor de temperatura                     = ')
-		winmenu.addstr(10,2,'Temperatura del conductor                 = ')
-		winmenu.addstr(11,2,'Temperatura de cortocicuito del conductor = ')
-		winmenu.addstr(12,2,'Ciclos del cortocircuito                  = ')
-		winmenu.addstr(13,2,'Corriente de cortocircuito                = ')
-		winmenu.addstr(14,2,'Fases                                     = ')
-		self.v   = float(winmenu.getstr( 2,48))
-		self.p   = float(winmenu.getstr( 3,48))
-		self.l   = float(winmenu.getstr( 4,48))
-		self.fp  = float(winmenu.getstr( 5,48))
-		self.n   = float(winmenu.getstr( 6,48))
-		self.e   = float(winmenu.getstr( 7,48))
-		self.fa  = float(winmenu.getstr( 8,48))
-		self.ft  = float(winmenu.getstr( 9,48))
-		self.Tc  = float(winmenu.getstr(10,48))
-		self.Tcc = float(winmenu.getstr(11,48))
-		self.ccc = float(winmenu.getstr(12,48))
+		wind.addstr( 2,2,'Voltaje                                   = ')
+		wind.addstr( 3,2,'Potencia                                  = ')
+		wind.addstr( 4,2,'Longitud                                  = ')
+		wind.addstr( 5,2,'Factor de Potencia                        = ')
+		wind.addstr( 6,2,'Eficiencia                                = ')
+		wind.addstr( 7,2,'Caida de tension deseada                  = ')
+		wind.addstr( 8,2,'Factor de agrupamiento                    = ')
+		wind.addstr( 9,2,'Factor de temperatura                     = ')
+		wind.addstr(10,2,'Temperatura del conductor                 = ')
+		wind.addstr(11,2,'Temperatura de cortocicuito del conductor = ')
+		wind.addstr(12,2,'Ciclos del cortocircuito                  = ')
+		wind.addstr(13,2,'Corriente de cortocircuito                = ')
+		wind.addstr(14,2,'Fases                                     = ')
+		self.v   = float(wind.getstr( 2,48))
+		self.p   = float(wind.getstr( 3,48))
+		self.l   = float(wind.getstr( 4,48))
+		self.fp  = float(wind.getstr( 5,48))
+		self.n   = float(wind.getstr( 6,48))
+		self.e   = float(wind.getstr( 7,48))
+		self.fa  = float(wind.getstr( 8,48))
+		self.ft  = float(wind.getstr( 9,48))
+		self.Tc  = float(wind.getstr(10,48))
+		self.Tcc = float(wind.getstr(11,48))
+		self.ccc = float(wind.getstr(12,48))
 		self.tcc = self.ccc/60.0
-		self.Icc = float(winmenu.getstr(13,48))
-		self.st  = float(winmenu.getstr(14,48))
+		self.Icc = float(wind.getstr(13,48))
+		self.st  = float(wind.getstr(14,48))
 
 class ResultadoCircuito:
 	"""Resultados. Para obtener el calibre deseado"""	
@@ -49,7 +49,8 @@ class ResultadoCircuito:
 		self.amp = calc.seleccion_ampacidad(self.ipc, self.ic, self.imin)
 		self.Zmax = calc.impedancia_maxima(dat.e, dat.v, dat.l, self.ipc, self.st[0])
 		self.Zreal = calc.impedancia_real(self.Zmax)
-		self.ereal = calc.caida_tension_real(self.Zreal[0], self.st[0], self.ipc, dat.l, dat.v)
+		self.Zsel = calc.impedancia_seleccionada(self.amp[2],self.Zreal[0],self.sicc[2])
+		self.ereal = calc.caida_tension_real(self.Zsel, self.st[0], self.ipc, dat.l, dat.v)
 		self.sicc = calc.seccion_conductor_cc(dat.Icc, dat.Tc, dat.Tcc, dat.tcc)
 		self.awg = calc.conductor_AWG(self.amp[2], self.Zreal[0], self.sicc[2])
 
@@ -60,29 +61,59 @@ curses.start_color()
 #curses.noecho()
 #curses.cbreak()
 curses.echo()
-#mainscr.keypad(1)
+mainscr.keypad(1)
+mainscr.border(0)
+mainscr.addstr( " Calibrin AWG v0.0.5 ", curses.A_BOLD)
+mainscr.refresh()
+
 
 def menu():
-	global winmenu
-	winmenu = curses.newwin(6,20,2,2)
-	winmenu.border(0)
-	winmenu.addstr(0,7," MENU ", curses.A_BOLD)
-	winmenu.addstr(2,2, "1 Nuevo Circuito ")
-	winmenu.addstr(3,2, "2 Salir ")
-	winmenu.addstr(4,2, "Opcion? ")
+	global winm
+	mainscr.nodelay(0)
+	curses.noecho()
+	selection = -1
+	option = 0
+	while selection < 0:
+		graphics = [0]*4
+		graphics[option] = curses.A_REVERSE
+		dims = mainscr.getmaxyx()
+		winm = curses.newwin(3,dims[1],1,0)
+		winm.box()
+		winm.keypad(1)
+		winm.addstr(1,2, "Nuevo Circuito", graphics[0])
+		winm.addstr(1,20, "Imprimir", graphics[1])
+		winm.addstr(1,32, "Ayuda", graphics[2])
+		winm.addstr(1,42, "Salir",graphics[3])
+		winm.refresh()
+		action = winm.getch()
+		if action == curses.KEY_LEFT:
+			option = (option - 1) % 4
+		elif action == curses.KEY_RIGHT:
+			option = (option + 1) % 4
+		elif action == ord('\n'):
+			selection = option
+
+	if selection == 0:
+		datos()
+		resultados()
+		menu()
+	elif selection == 3:
+		curses.endwin()
 
 def datos():
-	global cid
-	winmenu.clear()
-	winmenu.resize(18,60)
-	winmenu.redrawwin()
-	winmenu.border(0)
-	winmenu.addstr(0,27," DATOS ",curses.A_BOLD)
-	winmenu.refresh()
+	global cid, wind
+	curses.echo()
+	wind = curses.newwin(18,60,4,2)
+	wind.border(0)
+	wind.keypad(1)
+	wind.addstr(0,27," DATOS ",curses.A_BOLD)
+	wind.refresh()
 	cid = ResultadoCircuito()
-	winmenu.addstr(16,2,"Presione ENTER ")
-	winmenu.getch()
-	winmenu.clear()
+	wind.addstr(16,2,"Presione ENTER ")
+	wind.getch()
+	wind.clear()
+
+
 def resultados():
 	winr = curses.newwin(16,60,20,2)
 	winr.border(0)
@@ -113,17 +144,7 @@ def resultados():
 	
 	winr.refresh()
 	winr.getch()
-new = 0
-while new != ord('2'):
-	mainscr.clear()
-	mainscr.border(0)
-	mainscr.addstr( " Calibrin AWG v0.0.4 ", curses.A_BOLD)
-	mainscr.refresh()
-	menu()
-	new = winmenu.getch()
-	winmenu.refresh()
-	if new == ord('1'):
-		datos()	
-		resultados()
+
+menu()
 
 curses.endwin()

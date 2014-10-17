@@ -24,6 +24,7 @@
 #Long: Longitud del circuito
 #Z_m : Impedencia maxima
 #e_r : porcentaje de caida de tension real
+#Z_imp: Impedancia del conducto por caida de tension
 #Z_r : Impedancia real del calibre del conductor
 #tcc : tiempo del cortocircuito
 
@@ -67,9 +68,9 @@ def seleccion_ampacidad(Ipc, Ic, Imin):
 		if Inom <= i[3]:
 			Icu = i[3]
 			AWG_amp = i[0]
-			AWG_z = i[1]
+			AWG_z_a = i[1]
 			break
-	return Icu, AWG_amp, AWG_z, Inom
+	return Icu, AWG_amp, AWG_z_a, Inom
 
 def impedancia_maxima(e_p, Volt, Long, Ipc, k):
 	Z_m = (e_p*Volt*1000)/(k*Long*Ipc)
@@ -79,10 +80,14 @@ def impedancia_real(Z_m):
 	tabla_AWG = imprimir_tabla()
 	for i in tabla_AWG:
 		if Z_m >= i[1]:
-			Z_r = i[1]
+			Z_imp = i[1]
 			AWG_imp = i[0]
 			break
-	return Z_r, AWG_imp
+	return Z_imp, AWG_imp
+
+def impedancia_seleccionada(AWG_z_a, Z_imp, AWG_z_cc):
+        Z_r = min(AWG_z_a, Z_imp, AWG_z_cc)
+        return Z_r
 
 def caida_tension_real(Z_r, k, Ipc, Long, Volt):
 	e_r = (Z_r*k*Long*Ipc)/(Volt*1000)
@@ -97,11 +102,11 @@ def seccion_conductor_cc(Icc, Tc, Tcc, tcc):
 		if A_mm2 <= i[4]:
 			seccion_mm2 = i[4]
 			AWG_icc = i[0]
-			AWG_z = i[1]
+			AWG_z_cc = i[1]
 			break
-	return seccion_mm2, AWG_icc, AWG_z, A_cmil, A_mm2
+	return seccion_mm2, AWG_icc, AWG_z_cc, A_cmil, A_mm2
 
-#nota: para AWG_amp[2], AWG_imp[0], AWG_icc[2]
+#nota: para el calculo de e_real  AWG_amp[2], AWG_imp[0], AWG_icc[2]
 
 def conductor_AWG(AWG_amp, AWG_imp, AWG_icc):
 	AWG_f = min(AWG_amp, AWG_imp, AWG_icc)
@@ -111,8 +116,8 @@ def conductor_AWG(AWG_amp, AWG_imp, AWG_icc):
 			AWG = i
 			AWG_cal = i[0]
 			AWG_z = i[1]
-			AWG_60 = i[2]
-			AWG_75 = i[3]
+			AWG_75 = i[2]
+			AWG_90 = i[3]
 			AWG_s = i[4]
 			AWG_a = i[5]
 			
