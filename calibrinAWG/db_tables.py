@@ -9,7 +9,7 @@ def datos_calibres(cal, imp, a75, a90, secc, area):
 	return awg_calibre
 
 def imprimir_tabla():
-	tabla_cal = [awg14, awg12, awg10, awg8, awg6, awg4, awg3, awg2, awg1, awg1_0, awg2_0, awg4_0, awg250, awg300, awg350, awg400, awg500, awg600, awg750, awg1000]
+	tabla_cal = [awg14, awg12, awg10, awg8, awg6, awg4, awg3, awg2, awg1, awg1_0, awg2_0, awg3_0, awg4_0, awg250, awg300, awg350, awg400, awg500, awg600, awg750, awg1000]
 	#for i in tabla_cal:
 		#print '%8s %12.6f %6.0f %6.0f %10s %10s'
 		#print i

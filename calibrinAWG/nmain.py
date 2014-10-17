@@ -49,9 +49,9 @@ class ResultadoCircuito:
 		self.amp = calc.seleccion_ampacidad(self.ipc, self.ic, self.imin)
 		self.Zmax = calc.impedancia_maxima(dat.e, dat.v, dat.l, self.ipc, self.st[0])
 		self.Zreal = calc.impedancia_real(self.Zmax)
+		self.sicc = calc.seccion_conductor_cc(dat.Icc, dat.Tc, dat.Tcc, dat.tcc)
 		self.Zsel = calc.impedancia_seleccionada(self.amp[2],self.Zreal[0],self.sicc[2])
 		self.ereal = calc.caida_tension_real(self.Zsel, self.st[0], self.ipc, dat.l, dat.v)
-		self.sicc = calc.seccion_conductor_cc(dat.Icc, dat.Tc, dat.Tcc, dat.tcc)
 		self.awg = calc.conductor_AWG(self.amp[2], self.Zreal[0], self.sicc[2])
 
 
