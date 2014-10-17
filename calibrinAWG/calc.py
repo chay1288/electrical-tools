@@ -121,4 +121,4 @@ def conductor_AWG(AWG_amp, AWG_imp, AWG_icc):
 			AWG_s = i[4]
 			AWG_a = i[5]
 			
-	return AWG_cal, AWG_z, AWG_60, AWG_75, AWG_s, AWG_a, AWG
+	return AWG_cal, AWG_z, AWG_75, AWG_90, AWG_s, AWG_a, AWG
