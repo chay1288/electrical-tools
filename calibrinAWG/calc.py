@@ -28,7 +28,7 @@
 #Z_r : Impedancia real del calibre del conductor
 #tcc : tiempo del cortocircuito
 
-from db_tables import imprimir_tabla
+from db_tables import get_tabla_prop_AWG
 from math import sqrt, log10
 
 def alimentacion(sistema):
@@ -63,7 +63,7 @@ def corriente_minima(Ipc, Inc=0):
 
 def seleccion_ampacidad(Ipc, Ic, Imin):
 	Inom = max(Ipc, Ic, Imin)
-	tabla_AWG = imprimir_tabla()
+	tabla_AWG = get_tabla_prop_AWG()
 	for i in tabla_AWG:
 		if Inom <= i[3]:
 			Icu = i[3]
@@ -77,7 +77,7 @@ def impedancia_maxima(e_p, Volt, Long, Ipc, k):
 	return Z_m
 
 def impedancia_real(Z_m):
-	tabla_AWG = imprimir_tabla()
+	tabla_AWG = get_tabla_prop_AWG()
 	for i in tabla_AWG:
 		if Z_m >= i[1]:
 			Z_imp = i[1]
@@ -97,7 +97,7 @@ def seccion_conductor_cc(Icc, Tc, Tcc, tcc):
 	const_temp = (Tcc+234)/(Tc+234)
 	A_cmil = sqrt((tcc*Icc**2)/(0.0297*log10(const_temp)))
 	A_mm2 = 0.0005067074791*A_cmil
-	tabla_AWG = imprimir_tabla()
+	tabla_AWG = get_tabla_prop_AWG()
 	for i in tabla_AWG:
 		if A_mm2 <= i[4]:
 			seccion_mm2 = i[4]
@@ -110,7 +110,7 @@ def seccion_conductor_cc(Icc, Tc, Tcc, tcc):
 
 def conductor_AWG(AWG_amp, AWG_imp, AWG_icc):
 	AWG_f = min(AWG_amp, AWG_imp, AWG_icc)
-	tabla_AWG = imprimir_tabla()
+	tabla_AWG = get_tabla_prop_AWG()
 	for i in tabla_AWG:
 		if AWG_f == i[1]:
 			AWG = i
