@@ -32,7 +32,17 @@ from db_tables import tabla_cal_AWG, tabla_fct, tabla_fca, tabla_itm, tabla_cpt
 from math import sqrt, log10
 
 # Seccion de Calculos de Conductores
-tabla_AWG = tabla_cal_AWG 
+
+tabla_AWG = tabla_cal_AWG
+
+# Indice de tabla_cal_AWG
+# 0: Calibre
+# 1: Impedancia
+# 2: Conductor a 60C
+# 3: Conductor a 75C
+# 4: Conductor a 90C
+# 5: Seccion Cobre
+# 6: Area, Cobre + Aislante
 
 def alimentacion(sistema):
 	if sistema==1:
@@ -44,16 +54,15 @@ def alimentacion(sistema):
 	elif sistema==3:
 		K_F=sqrt(3)
 		K_E=100*K_F
-	return K_E, K_F, sistema
+	return K_E, K_F
 
 def temp_cond(Tc):
 	temp = [60,75,90]
 	TC = temp.index(Tc)
 	return TC
 
-def fct(Ta, Tc):
+def fct(Ta, TC):
 	tabla_FCT = tabla_fct
-	TC = temp_cond(Tc)
 	for i in tabla_FCT:
 		if Ta <= i[0]:
 			fct = i
@@ -69,95 +78,78 @@ def fca(CTC):
 			break
 	return fa
 	
-def corriente_plena_carga(Pot, Volt, FP, efic, sistema):
-	fases = alimentacion(sistema)
-	Ipc = Pot/(Volt*FP*efic*fases[1])
+def corriente_plena_carga(Pot, Volt, FP, efic, K_F):
+	Ipc = Pot/(Volt*FP*efic*K_F)
 	return Ipc
 
-def corriente_minima(Ipc, TC, Inc=0):
+def ampacidad_minima(Ipc, TC, Inc=0):
 	Imin = Inc + 1.25*Ipc
 	global tabla_AWG
 	for i in tabla_AWG:
 		if Imin <= i[TC+2]:
-			Icu_min = i[TC+2]
-			AWG_amp_min = i[0]
-			AWG_z_a_min = i[1]
+			amp_min = i[TC+2]
+			amp_min_AWG = i[0]
+			amp_min_z = i[1]
 			break
-	return Icu_min, AWG_amp_min, AWG_z_a_min, Imin 
+	return Imin, amp_min_AWG, amp_min, amp_min_z 
 
-def corriente_corregida(fa, ft, Ipc, TC):
+def ampacidad_corregida(Ipc, fa, ft, TC):
 	Ic = Ipc/(fa*ft)
 	global tabla_AWG
 	for i in tabla_AWG:
 		if Ipc <= fa*ft*i[TC+2]:
-			Icu_c = fa*ft*i[TC+2]
-			AWG_amp_c = i[0]
-			AWG_z_a_c = i[1]
+			amp_c = fa*ft*i[TC+2]
+			amp_c_AWG = i[0]
+			amp_c_z = i[1]
 			break
-	return Icu_c, AWG_amp_c, AWG_z_a_c, Ic
+	return Ic, amp_c_AWG, amp_c, amp_c_z
 
-def seleccion_ampacidad(AWG_z_a_min, AWG_z_a_c, TC):
-	sel_amp = min(AWG_z_a_min, AWG_z_a_c)
+def conductor_ampacidad(amp_min_z, amp_c_z):
+	sel_amp = min(amp_min_z, amp_c_z)
 	global tabla_AWG
 	for i in tabla_AWG:
 		if sel_amp == i[1]:
-			Icu = i[TC+2]
-			AWG_amp = i[0]
-			AWG_z_a = i[1]
+			AWG_amp = i
 			break
-	return Icu, AWG_amp, AWG_z_a
+	return AWG_amp
 
-def impedancia_maxima(e_p, Volt, Long, Ipc, K_E):
-	Z_m = (e_p*Volt*1000)/(K_E*Long*Ipc)
-	return Z_m
+def impedancia_maxima_permitida(e_p, Volt, Long, Ipc, K_E):
+	Z_max_p = (e_p*Volt*1000)/(K_E*Long*Ipc)
+	return Z_max_p
 
-def impedancia_real(Z_m):
+def conductor_impedancia(Z_max_p):
 	global tabla_AWG
 	for i in tabla_AWG:
-		if Z_m >= i[1]:
-			Z_imp = i[1]
-			AWG_imp = i[0]
+		if Z_max_p >= i[1]:
+			AWG_imp = i
 			break
-	return Z_imp, AWG_imp
+	return AWG_imp
 
-def impedancia_seleccionada(AWG_z_a, Z_imp, AWG_z_cc):
-        Z_r = min(AWG_z_a, Z_imp, AWG_z_cc)
-        return Z_r
-
-def caida_tension_real(Z_r, K_E, Ipc, Long, Volt):
-	e_r = (Z_r*K_E*Long*Ipc)/(Volt*1000)
-	return e_r
-
-def seccion_conductor_cc(Icc, Tc, Tcc, tcc):
+def seccion_cobre_icc(Icc, Tc, Tcc, tcc):
 	const_temp = (Tcc+234)/(Tc+234)
 	A_cmil = sqrt((tcc*Icc**2)/(0.0297*log10(const_temp)))
 	A_mm2 = 0.0005067074791*A_cmil
+	return A_mm2
+	
+def conductor_cortocircuito(A_mm2):
 	global tabla_AWG
 	for i in tabla_AWG:
 		if A_mm2 <= i[5]:
-			seccion_mm2 = i[5]
-			AWG_icc = i[0]
-			AWG_z_cc = i[1]
+			AWG_icc = i
 			break
-	return seccion_mm2, AWG_icc, AWG_z_cc, A_cmil, A_mm2
+	return AWG_icc
 
-#nota: para el calculo de e_real  AWG_amp[2], AWG_imp[0], AWG_icc[2]
-
-def conductor_AWG(AWG_amp, AWG_imp, AWG_icc):
-	AWG_f = min(AWG_amp, AWG_imp, AWG_icc)
+def conductor_AWG(cond_amp, cond_imp, cond_icc):
+	AWG_f = min(cond_amp, cond_imp, cond_icc)
 	global tabla_AWG
 	for i in tabla_AWG:
 		if AWG_f == i[1]:
-			AWG = i
-			AWG_cal = i[0]
-			AWG_z = i[1]
-			AWG_60 = i[2]
-			AWG_75 = i[3]
-			AWG_90 = i[4]
-			AWG_s = i[5]
-			AWG_a = i[6]
-			
-	return AWG_cal, AWG_z, AWG_75, AWG_90, AWG_s, AWG_a, AWG, AWG_60
+			AWG = i			
+	return AWG
+
+def caida_tension_real(Z_cond, K_E, Ipc, Long, Volt):
+	e_r = (Z_cond*K_E*Long*Ipc)/(Volt*1000)
+	return e_r
 
 # Seccion de Calculo de Proteccion de Circuitos
 def proteccion_ITM(Ipc, Inc=0):
@@ -173,13 +165,13 @@ def conductor_puesta_tierra(ITM):
 	tabla_CPT = tabla_cpt
 	for i in tabla_CPT:
 		if ITM <= i[0]:
-			cpt_AWG = i[2]
+			cpt_AWG = i[1]
 			break
 	global tabla_AWG
 	for j in tabla_AWG:
-		if cpt_AWG <= j[0]:
-			cpt_area = j[6]
+		if cpt_AWG <= j[5]:
+			AWG_cpt = j
 			break
-	return cpt_AWG, cpt_area 
+	return AWG_cpt 
 
 # Sección de Calculo de Canalización
