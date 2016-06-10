@@ -12,7 +12,8 @@ temperaturas de 60ºC, 75ºC y 90ºC.
 
 Las unidades en que se realizan los cálculos son con SI (Sistema Internacional)
 
-Escrito en Python 2.7
+Escrito originalmente en Python 2.7 hasta la versión v0.0.9-alpha y adaptado 
+a python 3.4 en la versión v0.1.0-beta
 
 **Forma de Uso**
 
@@ -20,6 +21,7 @@ Ejecute su intérprete de python y diríjase a la carpeta `calibrinAWG` y ejecut
 el archivo `menu.py`.
 
 Del menú seleccione la opción deseada.
+
 1. Crea un nuevo circuito derivado
 2. Busca en la base de datos un circuito derivado de acuerdo a su ID
 3. Lista todos los circuitos en la base de datos

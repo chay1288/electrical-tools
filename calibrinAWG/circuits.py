@@ -20,25 +20,25 @@ class Circuit:
 
 	def prompt(self):
 		"""Datos proporcionados por el usuario para el calculo"""
-		print'================================================================='
+		print('=================================================================')
 		self.fn  =   int(input(' Fases                                      = '))
 		self.v   = float(input(' Voltaje                                    = '))
 		self.p   = float(input(' Potencia                                   = '))
 		self.fp  = float(input(' Factor de Potencia                         = '))
 		self.n   = float(input(' Eficiencia                                 = '))
-		print'-----------------------------------------------------------------'
+		print('-----------------------------------------------------------------')
 		self.l   = float(input(' Longitud                                   = '))
 		self.e   = float(input(' Caida de tension deseada                   = '))
-		print'-----------------------------------------------------------------'
+		print('-----------------------------------------------------------------')
 		self.CTC =   int(input(' Conductores en tuberia conduit             = '))
 		self.Ta  = float(input(' Temperatura ambiente                       = '))
-		print'-----------------------------------------------------------------'
+		print('-----------------------------------------------------------------')
 		self.Tc  = float(input(' Temperatura del conductor                  = '))
 		self.Tcc = float(input(' Temperatura de cortocircuito del conductor = '))
 		self.ccc = float(input(' Ciclos del cortocircuito                   = '))
 		self.tcc = self.ccc/60.0
 		self.Icc = float(input(' Corriente de cortocircuito                 = '))
-		print'================================================================='
+		print('=================================================================')
 		
 		self.data_input = [
 			self.fn, self.v, self.p, self.fp, self.n,
@@ -119,6 +119,7 @@ class Circuit:
 		("-----------------------------------------------------------------"),
 		(" CALIBRE Seleccionado      : "+str(self.awg[0])+" AWG"),
 		("      Ampacidad            : "+str(self.awg[self.TC+2])+" A @ "+str(self.Tc)+" C"),
+		("      Ampacidad Corregida  : "+str(self.awg[self.TC+2]*self.fa*self.ft)+" A @ "+str(self.Tc)+" C"),
 		("      Impedancia           : "+str(self.awg[1])+" ohm/km"),
 		("      Seccion de cobre     : "+str(self.awg[5])+" mm2"),
 		("      Seccion de aislante  : "+str(self.awg[6])+" mm2"),
@@ -131,16 +132,16 @@ class Circuit:
 		(" ")]
 
 		for i in self.reporte:
-			print i
+			print (i)
 
 	def search(self,id):
 		"""Busca los datos de un circuito en base a su ID"""
 		for i in self.db_circuits:
 			if id is i[0]:
-				print '    ID:',i[0]
-				print ' Fecha:',i[1].year,'/',i[1].month,'/',i[1].day
-				print '  Hora:',i[1].hour,':',i[1].minute,':',i[1].second
-				print 'Nombre:',i[2]
+				print('    ID:',i[0])
+				print(' Fecha:',i[1].year,'/',i[1].month,'/',i[1].day)
+				print('  Hora:',i[1].hour,':',i[1].minute,':',i[1].second)
+				print('Nombre:',i[2])
 				print('=================================================================')
 
 	def list_all_circuits(self):
@@ -148,10 +149,10 @@ class Circuit:
 		print(' ')
 		print('=================================================================')
 		for i in self.db_circuits:
-			print '    ID:',i[0]
-			print ' Fecha:',i[1].year,'/',i[1].month,'/',i[1].day
-			print '  Hora:',i[1].hour,':',i[1].minute,':',i[1].second
-			print 'Nombre:',i[2]
+			print('    ID:',i[0])
+			print(' Fecha:',i[1].year,'/',i[1].month,'/',i[1].day)
+			print('  Hora:',i[1].hour,':',i[1].minute,':',i[1].second)
+			print('Nombre:',i[2])
 			print('-----------------------------------------------------------------')
 		print(' ')
 		print('=================================================================')

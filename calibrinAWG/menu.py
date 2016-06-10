@@ -6,7 +6,7 @@
 # Name: Cálculo de Calibre de Conductores Eléctricos
 # Author: Isaías Hernández
 # Date: 19 Enero 2011
-# Version: 0.0.9
+# Version: 0.1.0
 # Licencia: GPLv3
 #
 # --------------------------------------------------
@@ -31,7 +31,7 @@ class Menu:
 	def display_menu(self):
 		system("clear")
 		print("""
-               CALIBRIN AWG v0.0.9
+               CALIBRIN AWG v0.1.0
                -------------------
 
 Programa para hacer calculos de calibre de conductor
@@ -51,12 +51,12 @@ Menu:
 		"""Display the menu and respond to choices."""
 		while True:
 			self.display_menu()
-			choice = raw_input('Introduzca una opcion del menu: ')
+			choice = input('Introduzca una opcion del menu: ')
 			action = self.choices.get(choice)
 			if action:
 				action()
 			else:
-				print'La opcion elegida [',choice,'] no es valida. \nIntente de nuevo.'
+				print('La opcion elegida [',choice,'] no es valida. \nIntente de nuevo.')
 				print(' ')
 				print(' ')
 
@@ -117,7 +117,7 @@ Menu:
 			reportDB.close()
 
 	def quit(self):
-		print 'Gracias por usar CALIBRIN AWG v0.0.9'
+		print('Gracias por usar CALIBRIN AWG v0.1.0')
 		sys.exit(0)
 
 if __name__ == "__main__":
