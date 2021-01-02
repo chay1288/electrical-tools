@@ -31,8 +31,8 @@ class Menu:
 	def display_menu(self):
 		system("clear")
 		print("""
-               CALIBRIN AWG v0.1.0
-               -------------------
+                  CALIBRAWG v0.1.0
+                --------------------
 
 Programa para hacer calculos de calibre de conductor
           en circuitos derivados electricos.

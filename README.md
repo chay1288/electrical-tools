@@ -1,4 +1,4 @@
-## CalibrinAWG
+## CalibrAWG
 
 *Para uso didáctico.* 
 
