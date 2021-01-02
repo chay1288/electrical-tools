@@ -17,7 +17,7 @@ a python 3.4 en la versión v0.1.0-beta
 
 **Forma de Uso**
 
-Ejecute su intérprete de python y diríjase a la carpeta `calibrinAWG` y ejecute
+Ejecute su intérprete de python y diríjase a la carpeta `calibrAWG` y ejecute
 el archivo `menu.py`.
 
 Del menú seleccione la opción deseada.
