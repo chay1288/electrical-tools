@@ -32,7 +32,7 @@ tabla_cal_AWG = [
 # TABLA 310-15(B)(2)(A). Factores de corrección de temperatura.
 
 # Estructura de tabla_fct: ['Temperatura Ambiente', '60 C', '75 C', '90 C']
-tabla_fct = [ 
+tabla_fct = [
 (10, 1.29, 1.20, 1.15),
 (15, 1.22, 1.15, 1.12),
 (20, 1.15, 1.11, 1.08),

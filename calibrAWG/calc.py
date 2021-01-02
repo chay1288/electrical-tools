@@ -77,7 +77,7 @@ def fca(CTC):
 			fa = i[1]
 			break
 	return fa
-	
+
 def corriente_plena_carga(Pot, Volt, FP, efic, K_F):
 	Ipc = Pot/(Volt*FP*efic*K_F)
 	return Ipc
@@ -91,7 +91,7 @@ def ampacidad_minima(Ipc, TC, Inc=0):
 			amp_min_AWG = i[0]
 			amp_min_z = i[1]
 			break
-	return Imin, amp_min_AWG, amp_min, amp_min_z 
+	return Imin, amp_min_AWG, amp_min, amp_min_z
 
 def ampacidad_corregida(Ipc, fa, ft, TC):
 	Ic = Ipc/(fa*ft)
@@ -130,7 +130,7 @@ def seccion_cobre_icc(Icc, Tc, Tcc, tcc):
 	A_cmil = sqrt((tcc*Icc**2)/(0.0297*log10(const_temp)))
 	A_mm2 = 0.0005067074791*A_cmil
 	return A_mm2
-	
+
 def conductor_cortocircuito(A_mm2):
 	global tabla_AWG
 	for i in tabla_AWG:
@@ -144,7 +144,7 @@ def conductor_AWG(cond_amp, cond_imp, cond_icc):
 	global tabla_AWG
 	for i in tabla_AWG:
 		if AWG_f == i[1]:
-			AWG = i			
+			AWG = i
 	return AWG
 
 def caida_tension_real(Z_cond, K_E, Ipc, Long, Volt):
@@ -172,6 +172,6 @@ def conductor_puesta_tierra(ITM):
 		if cpt_AWG <= j[5]:
 			AWG_cpt = j
 			break
-	return AWG_cpt 
+	return AWG_cpt
 
 # Sección de Calculo de Canalización

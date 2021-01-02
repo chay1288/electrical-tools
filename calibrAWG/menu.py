@@ -68,7 +68,7 @@ Menu:
 
 	def search_circuit(self):
 		id_find = input('\nIntroduzca el ID del Circuito a buscar: ')
-		self.new_circuito.search(id_find) 
+		self.new_circuito.search(id_find)
 
 	def list_circuits(self):
 		self.new_circuito.list_all_circuits()
@@ -83,7 +83,7 @@ Menu:
 				line += "\n"
 				report.write(line)
 			report.close()
-	
+
 	def save_all_circuits(self):
 		head_db_reporte = [
 			"ID","DATE_TIME","NAME",
@@ -117,8 +117,8 @@ Menu:
 			reportDB.close()
 
 	def quit(self):
-		print('Gracias por usar CALIBRIN AWG v0.1.0')
+		print('Gracias por usar CALIBRAWG v0.1.0')
 		sys.exit(0)
 
 if __name__ == "__main__":
-	Menu().run()	
+	Menu().run()

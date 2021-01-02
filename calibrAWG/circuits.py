@@ -39,7 +39,7 @@ class Circuit:
 		self.tcc = self.ccc/60.0
 		self.Icc = float(input(' Corriente de cortocircuito                 = '))
 		print('=================================================================')
-		
+
 		self.data_input = [
 			self.fn, self.v, self.p, self.fp, self.n,
 			self.l, self.e,
@@ -50,14 +50,14 @@ class Circuit:
 			if self.id is i[0]:
 				index_id = self.db_circuits.index(i)
 				self.db_circuits[index_id].append(self.data_input)
-					 
+
 	def compute(self):
 		"""Computo de los datos para obtener el calibre del conductor AWG"""
 		self.kFase   = calc.alimentacion(self.fn)
 		self.TC      = calc.temp_cond(self.Tc)
 		self.ft      = calc.fct(self.Ta, self.TC)
 		self.fa      = calc.fca(self.CTC)
-		
+
 		self.ipc     = calc.corriente_plena_carga(self.p, self.v, self.fp, self.n, self.kFase[1])
 		self.ampmin  = calc.ampacidad_minima(self.ipc, self.TC)
 		self.ampc    = calc.ampacidad_corregida(self.ipc, self.fa, self.ft, self.TC)
@@ -71,7 +71,7 @@ class Circuit:
 
 		self.awg     = calc.conductor_AWG(self.awg_amp[1], self.awg_imp[1], self.awg_icc[1])
 		self.ereal   = calc.caida_tension_real(self.awg[1], self.kFase[0], self.ipc, self.l, self.v)
-		
+
 		self.itm     = calc.proteccion_ITM(self.ipc)
 		self.awg_cpt = calc.conductor_puesta_tierra(self.itm)
 
@@ -157,4 +157,3 @@ class Circuit:
 		print(' ')
 		print('=================================================================')
 
-	
