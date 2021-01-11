@@ -1,6 +1,7 @@
-## CalibrAWG
+# CalibrAWG
 
-*Para uso didáctico.* 
+
+_**Para uso didáctico.**_
 
 Cálculo de calibre de conductores de eléctricos en circuitos derivados de 
 acuerdo a tres criterios establecidos en la NOM-001-SEDE-2012 de México. Los
@@ -12,13 +13,11 @@ temperaturas de 60ºC, 75ºC y 90ºC.
 
 Las unidades en que se realizan los cálculos son con SI (Sistema Internacional)
 
-Escrito originalmente en Python 2.7 hasta la versión v0.0.9-alpha y adaptado 
-a python 3.4 en la versión v0.1.0-beta
 
-**Forma de Uso**
+### Forma de Uso del CLI
 
 Ejecute su intérprete de python y diríjase a la carpeta `calibrAWG` y ejecute
-el archivo `menu.py`.
+el archivo `menu_cli.py`.
 
 Del menú seleccione la opción deseada.
 
@@ -38,3 +37,21 @@ comercializa en México.
 
 Además del calibre del conductor, calcula también el interruptor de protección
 y el conductor de puesta a tierra.
+
+
+### Lista de Versiones
+
+> `v0.0.9-alpha` Escrito originalmente en `Python 2.7`
+>
+> `v0.1.0-beta` Portada a `Python 3.4` funciona en la línea de comandos (CLI).
+>
+> `v0.2.0-beta` Implementa una función rudimentaria de Interfaz gráfica (GUI).
+Funciona en `Python 3.6.9`
+
+
+### To-Do
+
+- Mejorar las funciones del menú de la CLI
+- Continuar la implementación de la GUI
+- Continuar con la funciones de la simulación
+- Implementar la simulación en la GUI
