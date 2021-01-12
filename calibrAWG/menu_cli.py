@@ -8,7 +8,7 @@
 # Name: Cálculo de Calibre de Conductores Eléctricos
 # Author: Isaías Hernández
 # Date: 19 Enero 2011
-# Version: 0.1.0
+# Version: 0.2.0
 # Licencia: GPLv3
 #
 # --------------------------------------------------
@@ -35,7 +35,7 @@ class Menu:
     def display_menu(self):
         system("clear")
         print("""
-                  CALIBRAWG v0.1.0
+                  CALIBRAWG v0.2.0
                 --------------------
 
 Programa para hacer calculos de calibre de conductor
@@ -70,7 +70,9 @@ Menu:
         self.new_circuito = Circuit()
         self.new_circuito.prompt()
         self.new_circuito.compute()
-        self.new_circuito.show_results()
+        self.show_report = self.new_circuito.show_results()
+        for i in self.show_report:
+            print(i)
 
 
     def search_circuit(self):
@@ -97,14 +99,21 @@ Menu:
     def save_all_circuits(self):
         head_db_reporte = [
             "ID","DATE_TIME","NAME",
-            "FASES","VOLT","POT","FP","N","LONG","E","CTC","TA","TC","TCC","CCC","TCC","ICC",
+            "FASES","VOLT","POT","FP","N","LONG","E","CTC","TA","TC",
+                "TCC","CCC","TCC","ICC",
             "K_E","K_F","INDEX_TC","FT","FA",
-            "IPC","IMIN","A_MIN_AWG","A_MIN","A_MIN_Z","IC","A_C_AWG","A_C","A_C_Z",
-            "AWG_AMP","A_A_Z","A_A_A60C","A_A_A75C","A_A_A90C","A_A_SEC_CU","A_A_AREA",
-            "IMP_MAX_PERMITIDA","AWG_IMP","A_Z_Z","A_Z_A60C","A_Z_A75C","A_Z_A90C","A_Z_SEC_CU","A_Z_AREA",
-            "SEC_CU_ICC","AWG_ICC","A_I_Z","A_I_A60C","A_I_75C","A_I_90C","A_I_SEC_CU","A_I_AREA",
+            "IPC","IMIN","A_MIN_AWG","A_MIN","A_MIN_Z","IC","A_C_AWG",
+                "A_C","A_C_Z",
+            "AWG_AMP","A_A_Z","A_A_A60C","A_A_A75C","A_A_A90C",
+                "A_A_SEC_CU","A_A_AREA",
+            "IMP_MAX_PERMITIDA","AWG_IMP","A_Z_Z","A_Z_A60C","A_Z_A75C",
+                "A_Z_A90C","A_Z_SEC_CU","A_Z_AREA",
+            "SEC_CU_ICC","AWG_ICC","A_I_Z","A_I_A60C","A_I_75C","A_I_90C",
+                "A_I_SEC_CU","A_I_AREA",
             "AWG","A_Z,A_A60C","A_A75C","A_90C","A_SEC_CU","A_AREA","E_REAL",
-            "ITM","AWG_CPT","A_T_Z","A_T_A60C","A_T_75C","A_T_A90C","A_T_SEC_CU","A_T_AREA"]
+            "ITM","AWG_CPT","A_T_Z","A_T_A60C","A_T_75C","A_T_A90C",
+                "A_T_SEC_CU","A_T_AREA"
+        ]
 
 
         filename = "REPORTE_DB.csv"
@@ -129,7 +138,7 @@ Menu:
 
 
     def quit(self):
-        print('Gracias por usar CALIBRAWG v0.1.0')
+        print('Gracias por usar CALIBRAWG v0.2.0')
         sys.exit(0)
 
 

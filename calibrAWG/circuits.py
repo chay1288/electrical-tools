@@ -131,8 +131,8 @@ class Circuit:
         ("================================================================="),
         (" ")]
 
-        for i in self.reporte:
-            print (i)
+        return self.reporte
+
 
     def search(self,id):
         """Busca los datos de un circuito en base a su ID"""

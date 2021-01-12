@@ -18,6 +18,7 @@
 
 
 import sys
+import re
 from tkinter import Tk, Menu, Frame, Label, LabelFrame, \
         IntVar, DoubleVar, Entry, Button, \
         TOP, BOTTOM, GROOVE, LEFT, E, W
@@ -55,6 +56,7 @@ class CircuitGUI(Circuit, Frame):
         # Valores por defecto
         self.fn.set(1)
         self.v.set(127.0)
+        self.p.set(180.0)
         self.fp.set(0.9)
         self.n.set(0.9)
         self.l.set(1.0)
@@ -223,7 +225,8 @@ class MenuGUI(Frame):
             command=self.new_circuit)
         file_menu.add_command(label="Save Current Circuit", \
             command=self.save_current_circuit)
-        file_menu.add_command(label="Save ALL Circuits")
+        file_menu.add_command(label="Save ALL Circuits", \
+            command=self.save_all_circuits)
         file_menu.add_command(label="Exit", \
             command=self.exit_program)
         menu.add_cascade(label="File", menu=file_menu)
@@ -232,6 +235,13 @@ class MenuGUI(Frame):
         edit_menu.add_command(label="Search Circuit")
         edit_menu.add_command(label="List ALL Circuit")
         menu.add_cascade(label="Edit", menu=edit_menu)
+
+        simulation_menu = Menu(menu)
+        simulation_menu.add_command(label="Simulation by longititud")
+        simulation_menu.add_command(label="Simulation by Intensity")
+        simulation_menu.add_command(label="Simulation by Impedance")
+        simulation_menu.add_command(label="Simulation by ALL")
+        menu.add_cascade(label="Simulation", menu=simulation_menu)
 
         about_menu = Menu(menu)
         about_menu.add_command(label="About CalibrAWG", \
@@ -318,20 +328,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         self.boton_save_current = Button(self.buttons_frame, \
             text="Save", \
-            command=self.save_current_circuit)
+            command=self.save_current_button)
         self.boton_save_current.pack(side=LEFT, padx=5, pady=5)
 
 
     def calcular(self):
-        """Calcula usando circuitos.py"""
+        """Calcula usando circuits.py"""
         self.circuito_nuevo.get_data()
         self.circuito_nuevo.compute()
-        self.circuito_nuevo.show_results()
+        self.show_answer()
         self.circuito_nuevo.destroy()
 
 
     def save_current_circuit(self):
-        """Guarda el circuito actual en formato txt"""
+        """Guarda el circuito actual en formato .txt"""
         filename = "REPORTE_"+self.circuito_nuevo.name+".txt"
         with open(filename, "w") as report:
             reporte = self.circuito_nuevo.reporte
@@ -343,11 +353,78 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             report.close()
 
 
+    def save_current_button(self):
+        """Calcula y guarda el circuito actual.
+        Una combinación de las funciones calcular y save_current_circuit"""
+        self.calcular()
+        self.save_current_circuit()
+
+
+    def save_all_circuits(self):
+        """Guarda todos los circuito de la sesión en formato .csv"""
+        head_db_reporte = [
+            "ID","DATE_TIME","NAME",
+            "FASES","VOLT","POT","FP","N","LONG","E","CTC","TA","TC",
+                "TCC","CCC","TCC","ICC",
+            "K_E","K_F","INDEX_TC","FT","FA",
+            "IPC","IMIN","A_MIN_AWG","A_MIN","A_MIN_Z","IC","A_C_AWG",
+                "A_C","A_C_Z",
+            "AWG_AMP","A_A_Z","A_A_A60C","A_A_A75C","A_A_A90C",
+                "A_A_SEC_CU","A_A_AREA",
+            "IMP_MAX_PERMITIDA","AWG_IMP","A_Z_Z","A_Z_A60C","A_Z_A75C",
+                "A_Z_A90C","A_Z_SEC_CU","A_Z_AREA",
+            "SEC_CU_ICC","AWG_ICC","A_I_Z","A_I_A60C","A_I_75C","A_I_90C",
+                "A_I_SEC_CU","A_I_AREA",
+            "AWG","A_Z,A_A60C","A_A75C","A_90C","A_SEC_CU","A_AREA","E_REAL",
+            "ITM","AWG_CPT","A_T_Z","A_T_A60C","A_T_75C","A_T_A90C",
+                "A_T_SEC_CU","A_T_AREA"
+        ]
+
+        filename = "REPORTE_DB.csv"
+        with open(filename, "w") as reportDB:
+            db_reporte = self.circuito_nuevo.db_circuits
+            for title in head_db_reporte:
+                head  = ""
+                head += str(title)
+                head += ","
+                reportDB.write(head)
+            reportDB.write("\n")
+
+            for row in db_reporte:
+                for item in row:
+                    line = ""
+                    line += str(item)
+                    line += ","
+                    fila = re.sub(r'[\[\]\(\)]','',line)
+                    reportDB.write(fila)
+                reportDB.write("\n")
+            reportDB.close()
+
+
+    def show_answer(self):
+        """Ventana que muestra el resultado del circuito recién calculado"""
+        self.answer_window = Tk()
+        self.answer_window.title(f"Result from {self.circuito_nuevo.name}")
+        self.answer_frame = Frame(self.answer_window, \
+            relief=GROOVE, borderwidth=2, bg="white")
+        self.answer_frame.pack(side=TOP, padx=12, pady=12)
+
+        self.print_answer = self.circuito_nuevo.show_results()
+        for i in self.print_answer:
+            i = str(i)
+            self.answer_label = Label(self.answer_frame, \
+                text=i, \
+                font=("Consolas",9), \
+                bg="white", fg="black", \
+                anchor=W, justify=LEFT)
+            self.answer_label.pack(anchor=W)
+
+
 
 # Iniciar Ventana Principal, dimensiones y titulo
 main_window = Tk()
 main_window.geometry("1080x480")
-main_window.title("CalibrAWG v.0.1.1")
+main_window.title("CalibrAWG v.0.2.0")
 main_window.resizable(1, 1)
 
 # Inicia la instancia de la app
