@@ -20,8 +20,8 @@
 import sys
 import re
 from tkinter import Tk, Menu, Frame, Label, LabelFrame, \
-        IntVar, DoubleVar, Entry, Button, \
-        TOP, BOTTOM, GROOVE, LEFT, E, W
+                    IntVar, DoubleVar, Entry, Button, \
+                    TOP, BOTTOM, GROOVE, LEFT, RIGHT, E, W, NE, NW
 from circuits import Circuit
 
 
@@ -42,11 +42,11 @@ class CircuitGUI(Circuit, Frame):
         self.fp  = DoubleVar()
         self.n   = DoubleVar()
 
-        self.l   = DoubleVar()
-        self.e   = DoubleVar()
-
         self.CTC = IntVar()
         self.Ta  = DoubleVar()
+
+        self.l   = DoubleVar()
+        self.e   = DoubleVar()
 
         self.Tc  = DoubleVar()
         self.Tcc = DoubleVar()
@@ -59,121 +59,176 @@ class CircuitGUI(Circuit, Frame):
         self.p.set(180.0)
         self.fp.set(0.9)
         self.n.set(0.9)
-        self.l.set(1.0)
-        self.e.set(3.0)
         self.CTC.set(1)
         self.Ta.set(32.0)
+        self.l.set(1.0)
+        self.e.set(3.0)
         self.Tc.set(90.0)
         self.Tcc.set(105.0)
         self.ccc.set(1.0)
-        self.Icc.set(200.0)
+        self.Icc.set (200.0)
 
 
-    def prompt(self):
+    def prompt_new_circuit(self):
         """Muestra las etiquetas y las cajas de entrada"""
 
-        self.circuit_labelframe = LabelFrame(self, \
-            relief=GROOVE, borderwidth=2, \
-            text="Entrada de Datos de Circuito")
-        self.circuit_labelframe.pack(padx=12, pady=12, \
-            ipadx=12, ipady=12, \
+        self.circuit_data_labelframe = LabelFrame(
+            self, \
+            text="Circuit Data Input", \
+            relief=GROOVE, borderwidth=2)
+        self.circuit_data_labelframe.pack(padx=12, pady=12, \
+            ipadx=12, ipady=12, fill="both", expand="yes", \
             anchor="center")
 
+        self.intensity_labelframe = LabelFrame(
+            self.circuit_data_labelframe, \
+            text="Intensity Data", \
+            relief=GROOVE, borderwidth=2)
+        self.intensity_labelframe.pack(padx=12, pady=12, \
+            ipadx=12, ipady=12, fill="both", expand="yes", \
+            side=LEFT)
+
+        self.voltage_drop_labelframe = LabelFrame(
+            self.circuit_data_labelframe, \
+            text="Voltage Drop Data", \
+            relief=GROOVE, borderwidth=2)
+        self.voltage_drop_labelframe.pack(padx=12, pady=12, \
+            ipadx=12, ipady=12, fill="both", expand="yes", \
+            side=TOP, anchor="n")
+
+        self.short_circuit_labelframe = LabelFrame(
+            self.circuit_data_labelframe, \
+            text="Short Circuit Data", \
+            relief=GROOVE, borderwidth=2)
+        self.short_circuit_labelframe.pack(padx=12, pady=12, \
+            ipadx=12, ipady=12, fill="both", expand="yes", \
+            side=BOTTOM, anchor="s")
+
         # Crea etiquetas en Frame de Circuitos y posiciona
-        Label(self.circuit_labelframe, width=20, anchor=E, \
-            text="Fases: ").grid(row=1, column=0)
+        Label(self.intensity_labelframe, width=25, anchor=E, \
+            text="Fases: ").grid(row=0, column=0)
 
-        Label(self.circuit_labelframe, width=20, anchor=E, \
-            text="Voltaje: ").grid(row=2, column=0)
+        Label(self.intensity_labelframe, width=25, anchor=E, \
+            text="Voltaje: ").grid(row=1, column=0)
 
-        Label(self.circuit_labelframe, width=20, anchor=E, \
-            text="Potencia: ").grid(row=3, column=0)
+        Label(self.intensity_labelframe, width=25, anchor=E, \
+            text="Potencia: ").grid(row=2, column=0)
 
-        Label(self.circuit_labelframe, width=20, anchor=E, \
-            text="Factor de Potencia: ").grid(row=4, column=0)
+        Label(self.intensity_labelframe, width=25, anchor=E, \
+            text="Factor de Potencia: ").grid(row=3, column=0)
 
-        Label(self.circuit_labelframe, width=20, anchor=E, \
-            text="Eficiencia: ").grid(row=5, column=0)
+        Label(self.intensity_labelframe, width=25, anchor=E, \
+            text="Eficiencia: ").grid(row=4, column=0)
 
-        Label(self.circuit_labelframe, width=25, anchor=E, \
-            text="Longitud: ").grid(row=1, column=2)
+        Label(self.intensity_labelframe, anchor=W, \
+            text="CORRECTION FACTORS").grid(row=5, columnspan=2, \
+            pady=12, padx=12, sticky=W)
 
-        Label(self.circuit_labelframe, width=25, anchor=E, \
-            text="Caída de Tensión Permitida: ").grid(row=2,column=2)
+        Label(self.intensity_labelframe, width=25, anchor=E, \
+            text="Conductores en Conduit: ").grid(row=6, column=0)
 
-        Label(self.circuit_labelframe, width=25, anchor=E, \
-            text="Conductores en Conduit: ").grid(row=3, column=2)
+        Label(self.intensity_labelframe, width=25, anchor=E, \
+            text="Temperatura Ambiente: ").grid(row=7, column=0)
 
-        Label(self.circuit_labelframe, width=25, anchor=E, \
-            text="Temperatura Ambiente: ").grid(row=4, column=2)
+        Label(self.voltage_drop_labelframe, width=30, anchor=E, \
+            text="Longitud: ").grid(row=0, column=0)
 
-        Label(self.circuit_labelframe, width=30, anchor=E,\
-            text="Temp. Operación de conductor: ").grid(row=1, column=4)
+        Label(self.voltage_drop_labelframe, width=30, anchor=E, \
+            text="Caída de Tensión Permitida: ").grid(row=1,column=0)
 
-        Label(self.circuit_labelframe, width=30, anchor=E,\
-            text="Temp. Cortocircuito de conductor: ").grid(row=2, column=4)
+        Label(self.short_circuit_labelframe, width=30, anchor=E,\
+            text="Temp. Operación de conductor: ").grid(row=0, column=0)
 
-        Label(self.circuit_labelframe, width=30, anchor=E, \
-            text="Ciclos de Cortocircuito: ").grid(row=3, column=4)
+        Label(self.short_circuit_labelframe, width=30, anchor=E,\
+            text="Temp. Cortocircuito de conductor: ").grid(row=1, column=0)
 
-        Label(self.circuit_labelframe, width=30, anchor=E, \
-            text="Corriente de Cortocircuito: ").grid(row=4, column=4)
+        Label(self.short_circuit_labelframe, width=30, anchor=E, \
+            text="Ciclos de Cortocircuito: ").grid(row=2, column=0)
+
+        Label(self.short_circuit_labelframe, width=30, anchor=E, \
+            text="Corriente de Cortocircuito: ").grid(row=3, column=0)
 
         # Crea entradas con cajas de texto en Frame de self.circuitos
-        self.fases_entry = Entry(self.circuit_labelframe, \
-            font="Consolas", width=12, textvariable=self.fn)
-        self.fases_entry.grid(row=1,column=1)
+        self.fases_entry = Entry(
+            self.intensity_labelframe, \
+            textvariable=self.fn, \
+            font="Consolas", width=12, justify=RIGHT)
+        self.fases_entry.grid(row=0,column=1)
 
-        self.voltaje_entry = Entry(self.circuit_labelframe, \
-            font="Consolas", width=12, textvariable=self.v)
-        self.voltaje_entry.grid(row=2,column=1)
+        self.voltaje_entry = Entry(
+            self.intensity_labelframe, \
+            textvariable=self.v, \
+            font="Consolas", width=12, justify=RIGHT)
+        self.voltaje_entry.grid(row=1,column=1)
 
-        self.potencia_entry = Entry(self.circuit_labelframe, \
-            font="Consolas", width=12, textvariable=self.p)
-        self.potencia_entry.grid(row=3,column=1)
+        self.potencia_entry = Entry(
+            self.intensity_labelframe, \
+            textvariable=self.p, \
+            font="Consolas", width=12, justify=RIGHT)
+        self.potencia_entry.grid(row=2,column=1)
 
-        self.factor_potencia_entry = Entry(self.circuit_labelframe, \
-            font="Consolas", width=12, textvariable=self.fp)
-        self.factor_potencia_entry.grid(row=4,column=1)
+        self.factor_potencia_entry = Entry(
+            self.intensity_labelframe, \
+            textvariable=self.fp, \
+            font="Consolas", width=12, justify=RIGHT)
+        self.factor_potencia_entry.grid(row=3,column=1)
 
-        self.eficiencia_entry = Entry(self.circuit_labelframe, \
-            font="Consolas", width=12, textvariable=self.n)
-        self.eficiencia_entry.grid(row=5,column=1)
+        self.eficiencia_entry = Entry(
+            self.intensity_labelframe, \
+            textvariable=self.n, \
+            font="Consolas", width=12, justify=RIGHT)
+        self.eficiencia_entry.grid(row=4,column=1)
 
-        self.longitud_entry = Entry(self.circuit_labelframe, \
-            font="Consolas", width=12, textvariable=self.l)
-        self.longitud_entry.grid(row=1,column=3)
+        self.conductores_conduit_entry = Entry(
+            self.intensity_labelframe, \
+            textvariable=self.CTC, \
+            font="Consolas", width=12, justify=RIGHT)
+        self.conductores_conduit_entry.grid(row=6,column=1)
 
-        self.caida_tension_entry = Entry(self.circuit_labelframe, \
-            font="Consolas", width=12, textvariable=self.e)
-        self.caida_tension_entry.grid(row=2,column=3)
+        self.temperatura_ambiente_entry = Entry(
+            self.intensity_labelframe, \
+            textvariable=self.Ta, \
+            font="Consolas", width=12, justify=RIGHT)
+        self.temperatura_ambiente_entry.grid(row=7,column=1)
 
-        self.conductores_conduit_entry = Entry(self.circuit_labelframe, \
-            font="Consolas", width=12, textvariable=self.CTC)
-        self.conductores_conduit_entry.grid(row=3,column=3)
+        self.longitud_entry = Entry(
+            self.voltage_drop_labelframe, \
+            textvariable=self.l, \
+            font="Consolas", width=12, justify=RIGHT)
+        self.longitud_entry.grid(row=0,column=1)
 
-        self.temperatura_ambiente_entry = Entry(self.circuit_labelframe, \
-            font="Consolas", width=12, textvariable=self.Ta)
-        self.temperatura_ambiente_entry.grid(row=4,column=3)
+        self.caida_tension_entry = Entry(
+            self.voltage_drop_labelframe, \
+            textvariable=self.e, \
+            font="Consolas", width=12, justify=RIGHT)
+        self.caida_tension_entry.grid(row=1,column=1)
 
-        self.temperatura_conductor_entry = Entry(self.circuit_labelframe, \
-            font="Consolas", width=12, textvariable=self.Tc)
-        self.temperatura_conductor_entry.grid(row=1,column=5)
+        self.temperatura_conductor_entry = Entry(
+            self.short_circuit_labelframe, \
+            textvariable=self.Tc, \
+            font="Consolas", width=12, justify=RIGHT)
+        self.temperatura_conductor_entry.grid(row=0,column=1)
 
-        self.temperatura_cc_entry = Entry(self.circuit_labelframe, \
-            font="Consolas", width=12, textvariable=self.Tcc)
-        self.temperatura_cc_entry.grid(row=2,column=5)
+        self.temperatura_cc_entry = Entry(
+            self.short_circuit_labelframe, \
+            textvariable=self.Tcc, \
+            font="Consolas", width=12, justify=RIGHT)
+        self.temperatura_cc_entry.grid(row=1,column=1)
 
-        self.ciclos_cc_entry = Entry(self.circuit_labelframe, \
-            font="Consolas", width=12, textvariable=self.ccc)
-        self.ciclos_cc_entry.grid(row=3,column=5)
+        self.ciclos_cc_entry = Entry(
+            self.short_circuit_labelframe, \
+            textvariable=self.ccc, \
+            font="Consolas", width=12, justify=RIGHT)
+        self.ciclos_cc_entry.grid(row=2,column=1)
 
-        self.corriente_cc_entry = Entry(self.circuit_labelframe, \
-            font="Consolas", width=12, textvariable=self.Icc)
-        self.corriente_cc_entry.grid( row=4,column=5)
+        self.corriente_cc_entry = Entry(
+            self.short_circuit_labelframe, \
+            textvariable=self.Icc, \
+            font="Consolas", width=12, justify=RIGHT)
+        self.corriente_cc_entry.grid(row=3,column=1)
 
 
-    def get_data(self):
+    def get_data_new_circuit(self):
         """ Obtener datos de las variables"""
 
         self.fn  = self.fn.get()
@@ -201,7 +256,7 @@ class CircuitGUI(Circuit, Frame):
             self.CTC, self.Ta,
             self.Tc, self.Tcc, self.ccc, self.tcc, self.Icc]
 
-        # Qué hace este bloque?
+        # Almacena los datos en la base de datos
         for i in self.db_circuits:
             if self.id is i[0]:
                 index_id = self.db_circuits.index(i)
@@ -209,12 +264,12 @@ class CircuitGUI(Circuit, Frame):
 
 
 
-class MenuGUI(Frame):
+class MenuGUI(LabelFrame):
     """Ventana Principal del MenuGUI para CalibrAWG"""
 
 
-    def __init__(self, master=None):
-        Frame.__init__(self, master)
+    def __init__(self, master=None): 
+        LabelFrame.__init__(self, master)
         self.master = master
 
         menu = Menu(self.master)
@@ -223,10 +278,12 @@ class MenuGUI(Frame):
         file_menu = Menu(menu)
         file_menu.add_command(label="New Circuit", \
             command=self.new_circuit)
+        file_menu.add_separator()
         file_menu.add_command(label="Save Current Circuit", \
             command=self.save_current_circuit)
         file_menu.add_command(label="Save ALL Circuits", \
             command=self.save_all_circuits)
+        file_menu.add_separator()
         file_menu.add_command(label="Exit", \
             command=self.exit_program)
         menu.add_cascade(label="File", menu=file_menu)
@@ -237,9 +294,10 @@ class MenuGUI(Frame):
         menu.add_cascade(label="Edit", menu=edit_menu)
 
         simulation_menu = Menu(menu)
-        simulation_menu.add_command(label="Simulation by longititud")
+        simulation_menu.add_command(label="Simulation by Length")
         simulation_menu.add_command(label="Simulation by Intensity")
         simulation_menu.add_command(label="Simulation by Impedance")
+        simulation_menu.add_separator()
         simulation_menu.add_command(label="Simulation by ALL")
         menu.add_cascade(label="Simulation", menu=simulation_menu)
 
@@ -313,28 +371,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         # objeto de CircuitGUI para aplicar sus metodos en la GUI
         self.circuito_nuevo = CircuitGUI(master=main_window)
-        self.circuito_nuevo.prompt()
+        self.circuito_nuevo.prompt_new_circuit()
 
         # Frame de Botones en Ventana Principal
-        self.buttons_frame = Frame(self.circuito_nuevo, \
-            relief=GROOVE, borderwidth=2)
+        self.buttons_frame = Frame(self.circuito_nuevo)
         self.buttons_frame.pack(side=BOTTOM, padx=12, pady=12, anchor=E)
 
         # Crea botones y posiciona en Frame de Botones
         self.boton_awg = Button(self.buttons_frame, \
             text="Run", \
+            width=12, \
             command=self.calcular)
         self.boton_awg.pack(side=LEFT, padx=5, pady=5)
 
         self.boton_save_current = Button(self.buttons_frame, \
-            text="Save", \
+            text="Run & Save", \
+            width=12, \
             command=self.save_current_button)
         self.boton_save_current.pack(side=LEFT, padx=5, pady=5)
 
 
     def calcular(self):
         """Calcula usando circuits.py"""
-        self.circuito_nuevo.get_data()
+        self.circuito_nuevo.get_data_new_circuit()
         self.circuito_nuevo.compute()
         self.show_answer()
         self.circuito_nuevo.destroy()
@@ -423,9 +482,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # Iniciar Ventana Principal, dimensiones y titulo
 main_window = Tk()
-main_window.geometry("1080x480")
+main_window.geometry("800x420")
 main_window.title("CalibrAWG v.0.2.0")
-main_window.resizable(1, 1)
+#main_window.resizable(1, 1)
 
 # Inicia la instancia de la app
 APP = MenuGUI(master=main_window)
